@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+
+    <bean class="net.wanho.system.MyProcessor"></bean>
+
+
+    <bean id="mybean" class="net.wanho.pojo.MyBean" init-method="init" destroy-method="destroy"></bean>
+
+
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/*"/>
+            <bean class="net.wanho.system.MyInterceptor"></bean>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
+    <!--系统启动之时进行扫描，把具有特殊标记的类都会进行实例化-->
+    <context:component-scan base-package="net.wanho.controller">
+    </context:component-scan>
+
+
+
+
+    <!--<bean id="defaultAnnotationHandlerMapping"-->
+          <!--class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping" />-->
+    <!--<bean id="annotationMethodHandlerAdapter"-->
+          <!--class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter" />-->
+
+
+    <!--引入处理器映射器和处理器适配器
+        映射器用来找类；
+        适配器用来找方法；
+        它代替了比较繁琐的映射器和适配器标签
+        -->
+    <mvc:annotation-driven></mvc:annotation-driven>
+
+
+    <!--让静态页面资源能够过去，不会被中央控制器DispatcherServlet拦截-->
+    <!--<mvc:default-servlet-handler></mvc:default-servlet-handler>-->
+    <mvc:resources mapping="/js/**" location="/WEB-INF/js/"></mvc:resources>
+    <mvc:resources mapping="/css/**" location="/WEB-INF/css/"></mvc:resources>
+    <mvc:resources mapping="/**" location="/"></mvc:resources>
+
+
+
+    <!--<aop:aspectj-autoproxy proxy-target-class="true"></aop:aspectj-autoproxy>-->
+
+
+    <!--视图解析器，当controller调用业务逻辑完毕，需要返回到某个页面，那么就用视图解析
+        当使用到这个视图解析的时候，到底是客户端跳转还是服务器端跳转？
+        WEB-INF中的资源是不能直接访问的
+    -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/jsp/"></property>
+        <property name="suffix" value=".jsp"></property>
+    </bean>
+
+
+    <!--<bean id="simpleMappingExceptionResolver" class=-->
+            <!--"org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">-->
+        <!--<property name="exceptionMappings">-->
+            <!--<map>-->
+                <!--&lt;!&ndash; key:异常类别（非全称), 视图名称 &ndash;&gt;-->
+                <!--<entry key="ArithmeticException" value="exception1"/>-->
+                <!--<entry key="NullPointerException" value="exception2"/>-->
+                <!--<entry key="ArrayIndexOutOfBoundsException" value="exception3"/>-->
+            <!--</map>-->
+        <!--</property>-->
+        <!--&lt;!&ndash; 如果在以上配置中找不到异常，则进入此默认异常 &ndash;&gt;-->
+        <!--<property name="defaultErrorView" value="error"/>-->
+    <!--</bean>-->
+
+
+    <bean id="multipartResolver"
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="defaultEncoding" value="UTF-8"></property>
+        <property name="maxUploadSize" value="1024000"></property>
+    </bean>
+</beans>

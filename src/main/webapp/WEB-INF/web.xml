@@ -1,0 +1,63 @@
+<!DOCTYPE web-app PUBLIC
+ "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+ "http://java.sun.com/dtd/web-app_2_3.dtd" >
+
+<web-app>
+  <display-name>Archetype Created Web Application</display-name>
+
+  <error-page>
+    <error-code>404</error-code>
+    <location>/404.jsp</location>
+  </error-page>
+  <error-page>
+    <error-code>500</error-code>
+    <location>/500.jsp</location>
+  </error-page>
+
+<!--
+上下文环境变量，用于提供父容器所依赖的配置
+*代表通配符 classpath指web/EB-INF/classer的路径
+web.xml里面组件启动顺序就是监听器，过滤器，servlet
+
+-->
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>classpath:applicationContext-*.xml</param-value>
+  </context-param>
+  <listener>
+    <listener-class>net.wanho.system.MyListener</listener-class>
+  </listener>
+
+  <!--
+  servlet的配置，特别要注意init-param，它为子容器提供了配置
+      init-param可以被普通的servlet获取到。
+      load-on-startup的配置使得当前servlet在系统启动之时就会加载。如果没有，那么只有在用到的时候才会启动
+
+  -->
+
+
+  <filter>
+    <filter-name>filter</filter-name>
+    <filter-class>net.wanho.system.MyFilter</filter-class>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>filter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <servlet>
+    <servlet-name>mvc</servlet-name>
+    <servlet-class>net.wanho.system.MyDispacherServlet</servlet-class>
+    <init-param>
+      <param-name>contextConfigLocation</param-name>
+      <param-value>classpath:dispatcher-mvc.xml</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>mvc</servlet-name>
+    <url-pattern>/</url-pattern>
+  </servlet-mapping>
+</web-app>
